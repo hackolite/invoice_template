@@ -1,0 +1,283 @@
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #1e1e2e;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: #1e1e2e;
+  color: #cdd6f4;
+}
+
+.sidebar {
+  width: 300px;
+  background: #181825;
+  border-right: 1px solid #313244;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  color: #cdd6f4;
+  font-size: 18px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.field-category {
+  margin-bottom: 24px;
+}
+
+.field-category h3 {
+  color: #89b4fa;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-item {
+  background: #313244;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: grab;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.field-item:hover {
+  background: #45475a;
+  border-color: #89b4fa;
+  transform: translateX(4px);
+}
+
+.field-item:active {
+  cursor: grabbing;
+}
+
+.field-path {
+  color: #6c7086;
+  font-size: 11px;
+  margin-top: 4px;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  background: #181825;
+  border-bottom: 1px solid #313244;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar h1 {
+  color: #cdd6f4;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  background: #89b4fa;
+  color: #1e1e2e;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #74c7ec;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #45475a;
+  color: #cdd6f4;
+}
+
+.btn-secondary:hover {
+  background: #585b70;
+}
+
+.canvas-container {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  background: #11111b;
+}
+
+.canvas {
+  background: white;
+  min-height: 842px;
+  width: 595px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+.canvas.drag-over {
+  outline: 3px dashed #89b4fa;
+  outline-offset: 4px;
+}
+
+.dropped-field {
+  position: absolute;
+  background: #f9e2af;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: move;
+  font-size: 14px;
+  color: #1e1e2e;
+  border: 2px solid #f9e2af;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  transition: all 0.2s;
+}
+
+.dropped-field:hover {
+  border-color: #89b4fa;
+  z-index: 10;
+}
+
+.dropped-field.selected {
+  border-color: #89b4fa;
+  box-shadow: 0 4px 12px rgba(137, 180, 250, 0.4);
+}
+
+.dropped-field-label {
+  font-weight: 500;
+}
+
+.dropped-field-path {
+  font-size: 10px;
+  color: #6c7086;
+  margin-top: 2px;
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.loop-field {
+  background: #cba6f7;
+  border-color: #cba6f7;
+  min-width: 200px;
+  min-height: 100px;
+}
+
+.loop-field-content {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 11px;
+  color: #1e1e2e;
+}
+
+.remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f38ba8;
+  color: white;
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropped-field:hover .remove-btn {
+  display: flex;
+}
+
+.remove-btn:hover {
+  background: #eba0ac;
+}
+
+.preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.preview-modal {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  position: relative;
+}
+
+.preview-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f38ba8;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.preview-close:hover {
+  background: #eba0ac;
+}
