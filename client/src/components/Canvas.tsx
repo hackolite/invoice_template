@@ -70,6 +70,7 @@ export function Canvas({
             textAlign: (el.style?.textAlign as any) || 'left',
             color: el.style?.color as string || 'inherit',
             fontWeight: el.style?.fontWeight as any || 'normal',
+            lineHeight: el.style?.lineHeight as any || 'normal',
           }}
         >
           {displayContent}
@@ -161,7 +162,7 @@ export function Canvas({
         height: PAGE_HEIGHT,
         transform: `scale(${scale})`,
         marginBottom: `${PAGE_HEIGHT * (scale - 1)}px`, // Compensate for scale affecting flow
-        backgroundSize: showGrid && !isPreviewMode ? `${gridSize}px ${gridSize}px` : '20px 20px'
+        backgroundSize: showGrid && !isPreviewMode ? `${gridSize}px ${gridSize}px` : '0 0'
       }}
       ref={containerRef}
       onClick={() => onElementSelect(null)} // Deselect when clicking background
