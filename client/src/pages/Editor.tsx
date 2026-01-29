@@ -32,6 +32,8 @@ export default function Editor() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [scale, setScale] = useState(0.8);
   const [name, setName] = useState("");
+  const [gridSize, setGridSize] = useState(20);
+  const [showGrid, setShowGrid] = useState(true);
 
   // Initialize state when data loads
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function Editor() {
     layout?.elements.find(el => el.id === selectedElementId) || null
   , [layout, selectedElementId]);
 
-  const handleAddElement = (type: TemplateElement['type']) => {
+  const handleAddElement = (type: TemplateElement['type'], preset?: string) => {
     if (!layout) return;
 
     const newElement: TemplateElement = {
@@ -72,7 +74,38 @@ export default function Editor() {
         ]
       };
     } else if (type === 'text') {
-        newElement.content = "Double click to edit";
+        // Apply text presets
+        if (preset === 'address') {
+          newElement.content = "123 Street Name\nCity, State ZIP\nCountry";
+          newElement.width = 250;
+          newElement.height = 80;
+          newElement.style = { 
+            fontSize: 12, 
+            color: '#333333',
+            lineHeight: 1.5
+          };
+        } else if (preset === 'supplier') {
+          newElement.content = "Company Name";
+          newElement.width = 300;
+          newElement.height = 40;
+          newElement.style = { 
+            fontSize: 18, 
+            fontWeight: 'bold',
+            color: '#1a1a1a'
+          };
+        } else if (preset === 'header') {
+          newElement.content = "INVOICE";
+          newElement.width = 200;
+          newElement.height = 50;
+          newElement.style = { 
+            fontSize: 32, 
+            fontWeight: 'bold',
+            color: '#0066cc',
+            textAlign: 'center'
+          };
+        } else {
+          newElement.content = "Double click to edit";
+        }
     }
 
     setLayout(prev => prev ? ({
@@ -220,6 +253,39 @@ export default function Editor() {
           </div>
 
           <div className="p-4 border-t">
+            <h3 className="font-semibold text-sm text-foreground/80 mb-3">Text Presets</h3>
+            <div className="flex flex-col gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start"
+                onClick={() => handleAddElement('text', 'header')}
+              >
+                <Type className="w-4 h-4 mr-2" />
+                Invoice Header
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start"
+                onClick={() => handleAddElement('text', 'supplier')}
+              >
+                <Type className="w-4 h-4 mr-2" />
+                Supplier Name
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="justify-start"
+                onClick={() => handleAddElement('text', 'address')}
+              >
+                <Type className="w-4 h-4 mr-2" />
+                Address Block
+              </Button>
+            </div>
+          </div>
+
+          <div className="p-4 border-t">
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center gap-2"
@@ -266,17 +332,42 @@ export default function Editor() {
 
         {/* Main Canvas Area */}
         <main className="flex-1 bg-muted/20 overflow-auto relative flex flex-col items-center py-12">
-           <div className="absolute top-4 right-4 z-50 flex items-center gap-2 bg-white rounded-md shadow-sm border p-1">
-              <span className="text-xs text-muted-foreground px-2">Scale</span>
-              <Input 
-                type="number" 
-                value={Math.round(scale * 100)} 
-                onChange={(e) => setScale(Number(e.target.value) / 100)}
-                className="w-16 h-7 text-xs"
-                min={25}
-                max={200}
-              />
-              <span className="text-xs text-muted-foreground pr-2">%</span>
+           <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
+             <div className="flex items-center gap-2 bg-white rounded-md shadow-sm border p-1">
+               <span className="text-xs text-muted-foreground px-2">Scale</span>
+               <Input 
+                 type="number" 
+                 value={Math.round(scale * 100)} 
+                 onChange={(e) => setScale(Number(e.target.value) / 100)}
+                 className="w-16 h-7 text-xs"
+                 min={25}
+                 max={200}
+               />
+               <span className="text-xs text-muted-foreground pr-2">%</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-md shadow-sm border p-2">
+               <Label htmlFor="grid-toggle" className="text-xs text-muted-foreground cursor-pointer">Grid</Label>
+               <Switch 
+                 id="grid-toggle"
+                 checked={showGrid}
+                 onCheckedChange={setShowGrid}
+               />
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-md shadow-sm border p-1">
+               <span className="text-xs text-muted-foreground px-2">Size</span>
+               <Input 
+                 type="number" 
+                 value={gridSize} 
+                 onChange={(e) => setGridSize(Number(e.target.value))}
+                 className="w-16 h-7 text-xs"
+                 min={5}
+                 max={50}
+                 step={5}
+               />
+               <span className="text-xs text-muted-foreground pr-2">px</span>
+             </div>
            </div>
 
            {/* The actual canvas */}
@@ -289,6 +380,8 @@ export default function Editor() {
                 onElementUpdate={handleElementUpdate}
                 isPreviewMode={isPreviewMode}
                 scale={scale}
+                gridSize={gridSize}
+                showGrid={showGrid}
              />
            </div>
         </main>

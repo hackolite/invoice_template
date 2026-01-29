@@ -2,7 +2,6 @@ import { Rnd } from "react-rnd";
 import { type TemplateElement, type TemplateLayout } from "@shared/schema";
 import { clsx } from "clsx";
 import { useState, useRef, useEffect } from "react";
-import { get } from "lodash"; // We might not have lodash, I'll write a simple getter
 
 // Simple lodash.get alternative for binding resolution
 function getValue(obj: any, path: string, defaultValue?: any) {
@@ -23,6 +22,8 @@ interface CanvasProps {
   onElementUpdate: (id: string, updates: Partial<TemplateElement>) => void;
   isPreviewMode: boolean;
   scale?: number;
+  gridSize?: number;
+  showGrid?: boolean;
 }
 
 // A4 Dimensions in pixels at 96 DPI (approx)
@@ -38,9 +39,16 @@ export function Canvas({
   onElementSelect,
   onElementUpdate,
   isPreviewMode,
-  scale = 1
+  scale = 1,
+  gridSize = 20,
+  showGrid = true
 }: CanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Helper function to snap value to grid
+  const snapToGrid = (value: number): number => {
+    return Math.round(value / gridSize) * gridSize;
+  };
 
   // Helper to render content based on element type and mode
   const renderElementContent = (el: TemplateElement) => {
@@ -62,6 +70,7 @@ export function Canvas({
             textAlign: (el.style?.textAlign as any) || 'left',
             color: el.style?.color as string || 'inherit',
             fontWeight: el.style?.fontWeight as any || 'normal',
+            lineHeight: el.style?.lineHeight as any || 'normal',
           }}
         >
           {displayContent}
@@ -152,7 +161,8 @@ export function Canvas({
         width: PAGE_WIDTH,
         height: PAGE_HEIGHT,
         transform: `scale(${scale})`,
-        marginBottom: `${PAGE_HEIGHT * (scale - 1)}px` // Compensate for scale affecting flow
+        marginBottom: `${PAGE_HEIGHT * (scale - 1)}px`, // Compensate for scale affecting flow
+        backgroundSize: showGrid && !isPreviewMode ? `${gridSize}px ${gridSize}px` : '0 0'
       }}
       ref={containerRef}
       onClick={() => onElementSelect(null)} // Deselect when clicking background
@@ -166,13 +176,17 @@ export function Canvas({
             size={{ width: el.width, height: el.height }}
             position={{ x: el.x, y: el.y }}
             onDragStop={(e, d) => {
-              onElementUpdate(el.id, { x: d.x, y: d.y });
+              onElementUpdate(el.id, { 
+                x: snapToGrid(d.x), 
+                y: snapToGrid(d.y) 
+              });
             }}
             onResizeStop={(e, direction, ref, delta, position) => {
               onElementUpdate(el.id, {
-                width: parseInt(ref.style.width),
-                height: parseInt(ref.style.height),
-                ...position,
+                width: snapToGrid(parseInt(ref.style.width)),
+                height: snapToGrid(parseInt(ref.style.height)),
+                x: snapToGrid(position.x),
+                y: snapToGrid(position.y),
               });
             }}
             bounds="parent"
